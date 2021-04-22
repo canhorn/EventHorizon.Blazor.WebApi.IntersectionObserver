@@ -1,0 +1,53 @@
+﻿@page "/"
+@inherits IndexModel
+
+<h1>Usage of Intersection Observer WebApi</h1>
+
+Below is an area wried up to with an Interaction Observer, with an indicator in the bottom right of the triggered
+element
+from the list being watched. The code is built with Blazor, and using the EventHorizon Interop Generator Tool to create
+the C# interop abstraction, so this example is made with very little JavaScript.
+
+<div @ref="Last" id="last"></div>
+<div class="wrapper">
+    <div id="parent" @ref="Parent">
+    </div>
+</div>
+
+<pre>
+    var parent = await Parent.ToInteropElement();
+    var last = await Last.ToInteropElement();
+
+    var observer = new IntersectionObserver(
+        new ActionCallback&lt;IntersectionObserverEntry[], IntersectionObserver&gt;(
+            (entries, other) =>
+            {
+                var intersectedEntries = entries.Where(a => a.isIntersecting);
+                foreach (var intersectedEntry in intersectedEntries)
+                {
+                    Console.WriteLine(intersectedEntry.target.id, intersectedEntry.intersectionRatio);
+                    last.innerHTML = intersectedEntry.target.id + " : " + intersectedEntry.intersectionRatio;
+                }
+                return Task.CompletedTask;
+            }
+        ),
+        new IntersectionObserverInitCachedEntity
+        {
+            root = parent
+        }
+    );
+
+    for (var i = 1; i &lt;= 100; i++)
+    {
+        var child = EventHorizonBlazorInterop.FuncClass&gt;Element&gt;(
+            entity => new Element(entity),
+            new string[] { "document", "createElement" },
+            "div"
+        ); // document.createElement('div');
+        child.id = i.ToString();
+        child.innerHTML = child.id;
+        parent.appendChild(child);
+
+        observer.observe(child);
+    }
+</pre>
