@@ -23,7 +23,7 @@ jobs:
         with:
           dotnet-version: '5.0.100'
       - name: Install dependencies
-        run: dotnet restore ./Sample/EventHorizon.Blazor.BabylonJS 
+        run: dotnet restore ./EventHorizon.Blazor.WebApi_IntersectionObserver 
       - name: Build
         run: dotnet build --configuration Release --no-restore ./EventHorizon.Blazor.WebApi_IntersectionObserver
       - name: .NET Publish
